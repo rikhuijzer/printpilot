@@ -11,7 +11,10 @@ generate-site:
     set -euo pipefail
 
     mkdir -p _public/
-    cargo run --profile=dev -- generate site
+
+    cargo build --bin=core --target wasm32-unknown-unknown
+    cp target/wasm32-unknown-unknown/debug/core.wasm public/
+    cargo run --bin=site --profile=dev -- generate site
 
 serve-site:
     #!{{shebang}}
@@ -28,4 +31,6 @@ serve-site:
     trap "kill $SERVER_PID" EXIT
 
     # Run cargo in the foreground.
-    cargo watch -x "run --profile=dev -- generate site"
+    cargo build --bin=core --target wasm32-unknown-unknown
+    cp target/wasm32-unknown-unknown/debug/core.wasm _public/
+    cargo watch -x "run --bin=site --profile=dev -- generate site"

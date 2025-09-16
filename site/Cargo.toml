@@ -1,5 +1,5 @@
 [package]
-name = "printpilot"
+name = "site"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

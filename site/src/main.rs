@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 
     match args.command {
         Command::Generate(project) => match project {
-            Project::Site => printpilot::html::generate_site(),
+            Project::Site => site::html::generate_site(),
         },
     }?;
 

@@ -1,3 +1,3 @@
 # printpilot
 
-Turing PDFs into Books.
+Turn PDFs into Books.

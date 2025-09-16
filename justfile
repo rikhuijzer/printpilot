@@ -17,6 +17,7 @@ serve-site:
     #!{{shebang}}
 
     set -euo pipefail
+
     mkdir -p _public/
 
     # Using lomirus/live-server.

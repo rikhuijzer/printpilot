@@ -13,7 +13,7 @@ generate-site:
     mkdir -p _public/
 
     cargo build --bin=core --target wasm32-unknown-unknown
-    cp target/wasm32-unknown-unknown/debug/core.wasm public/
+    cp target/wasm32-unknown-unknown/debug/core.wasm _public/
     cargo run --bin=site --profile=dev -- generate site
 
 serve-site:

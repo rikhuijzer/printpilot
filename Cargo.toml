@@ -10,8 +10,3 @@ version = "0.1.0"
 edition = "2024"
 license = "GNU-Affero"
 repository = "https://github.com/rikhuijzer/printpilot"
-
-[profile.dev]
-debug = 0
-strip = "debuginfo"
-split-debuginfo = "unpacked"

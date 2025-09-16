@@ -2,11 +2,6 @@
 use anyhow::Result;
 use std::os::unix::fs::PermissionsExt;
 
-fn format_html(html: &str) -> String {
-    let document = scraper::Html::parse_document(html);
-    document.html()
-}
-
 fn write_public(src: &str, filename: &str) -> Result<()> {
     let path = std::path::Path::new("_public").join(filename);
 

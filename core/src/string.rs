@@ -19,7 +19,7 @@ pub extern "C" fn alloc() -> *mut c_void {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn dealloc(ptr: *mut c_void) {
-    Vec::from_raw_parts(ptr, 0, 1024);
+    unsafe { Vec::from_raw_parts(ptr, 0, 1024); }
 }
 
 pub fn u8_to_string(ptr: *mut u8) -> String {
@@ -41,7 +41,7 @@ pub fn write_to_ptr(ptr: *mut u8, text: &str) {
     header_bytes[..bytes.len()].copy_from_slice(bytes);
 }
 
-pub fn json(text: &str) -> Option<Value> {
+pub fn _json(text: &str) -> Option<Value> {
     match serde_json::from_str(text) {
         Ok(parsed) => Some(parsed),
         Err(error) => {

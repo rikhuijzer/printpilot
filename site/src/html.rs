@@ -6,8 +6,10 @@ fn write_public(src: &str, filename: &str) -> Result<()> {
 
     // Set write permissions before writing.
     let path_obj = std::path::Path::new("_public").join(filename);
-    let perms = std::fs::Permissions::from_mode(0o666);
-    std::fs::set_permissions(&path_obj, perms)?;
+    if path_obj.exists() {
+        let perms = std::fs::Permissions::from_mode(0o666);
+        std::fs::set_permissions(&path_obj, perms)?;
+    }
 
     std::fs::write(path, src)?;
 

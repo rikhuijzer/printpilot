@@ -21,8 +21,7 @@ struct CliArgs {
     command: Command,
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let args = CliArgs::parse();
 
     match args.command {

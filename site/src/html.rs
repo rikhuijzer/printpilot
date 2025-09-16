@@ -1,4 +1,3 @@
-
 use anyhow::Result;
 use std::os::unix::fs::PermissionsExt;
 
@@ -11,7 +10,7 @@ fn write_public(src: &str, filename: &str) -> Result<()> {
     std::fs::set_permissions(&path_obj, perms)?;
 
     std::fs::write(path, src)?;
-    
+
     // Set to read-only to avoid accidental manual edits.
     let path_obj = std::path::Path::new("_public").join(filename);
     let perms = std::fs::Permissions::from_mode(0o444);

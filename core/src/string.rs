@@ -19,7 +19,9 @@ pub extern "C" fn alloc() -> *mut c_void {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn dealloc(ptr: *mut c_void) {
-    unsafe { Vec::from_raw_parts(ptr, 0, 1024); }
+    unsafe {
+        Vec::from_raw_parts(ptr, 0, 1024);
+    }
 }
 
 pub fn u8_to_string(ptr: *mut u8) -> String {

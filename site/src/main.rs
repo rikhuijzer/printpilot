@@ -1,7 +1,7 @@
 use anyhow::Result;
-use clap::command;
 use clap::Parser;
 use clap::Subcommand;
+use clap::command;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Project {

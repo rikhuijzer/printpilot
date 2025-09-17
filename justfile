@@ -10,16 +10,12 @@ generate-site:
 
     set -euo pipefail
 
-    mkdir -p _public/
-
     cargo run -- generate site
 
 serve-site:
     #!{{shebang}}
 
     set -euo pipefail
-
-    mkdir -p _public/
 
     # Using lomirus/live-server.
     live-server --port 8080 _public/ & SERVER_PID=$!

@@ -42,7 +42,7 @@ fn write_public(src: &[u8], filename: &str) -> Result<()> {
 }
 
 fn write_static(filename: &str) -> Result<()> {
-    let path = std::path::Path::new("site/src/static").join(filename);
+    let path = std::path::Path::new("src/static").join(filename);
     let src = std::fs::read(path)?;
     write_public(&src, filename)
 }

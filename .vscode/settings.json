@@ -1,6 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
-        "/Users/rik/git/printpilot/site/core/Cargo.toml",
-        "/Users/rik/git/printpilot/site/Cargo.toml"
+        "/Users/rik/git/printpilot/Cargo.toml",
+        "/Users/rik/git/printpilot/core/Cargo.toml"
     ]
 }

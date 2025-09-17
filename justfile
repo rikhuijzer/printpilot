@@ -12,7 +12,6 @@ generate-site:
 
     mkdir -p _public/
 
-    cd site/
     cargo run -- generate site
 
 serve-site:
@@ -28,8 +27,6 @@ serve-site:
     # Trap to kill the server when the process exits. Without this, the port
     # will remain in use and a new server will fail to start.
     trap "kill $SERVER_PID" EXIT
-
-    cd site/
 
     # Run cargo in the foreground.
     cargo watch -x "run -- generate site"

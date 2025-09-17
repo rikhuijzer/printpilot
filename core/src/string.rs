@@ -8,8 +8,8 @@ use std::mem;
 use std::os::raw::c_void;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn alloc() -> *mut c_void {
-    let mut buf = Vec::with_capacity(1024);
+pub extern "C" fn alloc(length: usize) -> *mut c_void {
+    let mut buf = Vec::with_capacity(length);
     let ptr = buf.as_mut_ptr();
 
     mem::forget(buf);

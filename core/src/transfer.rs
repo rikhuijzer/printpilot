@@ -1,5 +1,5 @@
 ///
-/// Logic to transfer strings between Javascript and WebAssembly.
+/// Logic to transfer data between Javascript and WebAssembly.
 /// Thanks to Richard L. Apodaca at https://depth-first.com.
 ///
 use serde_json::Value;
@@ -18,9 +18,9 @@ pub extern "C" fn alloc(length: usize) -> *mut c_void {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn dealloc(ptr: *mut c_void) {
+pub unsafe extern "C" fn dealloc(ptr: *mut c_void, length: usize) {
     unsafe {
-        Vec::from_raw_parts(ptr, 0, 1024);
+        Vec::from_raw_parts(ptr, 0, length);
     }
 }
 

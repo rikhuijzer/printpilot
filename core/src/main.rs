@@ -1,4 +1,4 @@
-mod string;
+mod transfer;
 use ciborium::de::from_reader;
 use ciborium::ser::into_writer;
 use serde::Deserialize;
@@ -19,9 +19,9 @@ struct BookBody {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn hi(ptr: *mut u8) {
-    let text = string::u8_to_string(ptr);
+    let text = transfer::u8_to_string(ptr);
     let result = format!("{text} with something extra");
-    string::write_to_ptr(ptr, &result.to_string());
+    transfer::write_to_ptr(ptr, &result.to_string());
 }
 
 /// Apply `processor` to the incoming cbor data and return the result.
@@ -46,10 +46,10 @@ where
 pub extern "C" fn book_body(ptr: *mut u8) {
     let result = handle_cbor::<BookBody, _, _>(ptr, Ok);
     if result.is_err() {
-        string::write_to_ptr(ptr, "error");
+        transfer::write_to_ptr(ptr, "error");
         return;
     }
-    string::write_to_ptr(ptr, "done");
+    transfer::write_to_ptr(ptr, "done");
 }
 
 pub fn main() {}

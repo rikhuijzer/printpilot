@@ -1,3 +1,15 @@
+function writeToPtr(instance, ptr, bytes, bufferLength) {
+    const buffer = instance.exports.memory.buffer;
+    const view = new Uint8Array(buffer, ptr, bufferLength);
+    view.set(bytes.slice(0, bufferLength));
+}
+
+function readFromPtr(instance, ptr, bufferLength) {
+    const buffer = instance.exports.memory.buffer;
+    const bytes = new Uint8Array(buffer, ptr, bufferLength);
+    return bytes;
+}
+
 function resetBodyUpload() {
   const uploader = document.getElementById('body-upload');
   uploader.value = '';
@@ -27,10 +39,10 @@ async function submitBodyUpload() {
     }]);
 
     const exports = core.instance.exports;
-    const ptr = exports.alloc();
-    writeToPtr(core.instance, ptr, encoded);
+    const ptr = exports.alloc(encoded.length);
+    writeToPtr(core.instance, ptr, encoded, encoded.length);
     exports.book_body(ptr);
-    const result = readFromPtr(core.instance, ptr);
-    exports.dealloc(ptr);
+    const result = readFromPtr(core.instance, ptr, encoded.length);
     console.log(`Received: ${result}`);
+    exports.dealloc(ptr, encoded.length);
 }

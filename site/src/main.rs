@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
 use clap::Subcommand;
-use std::os::unix::fs::PermissionsExt;
 use clap::command;
+use std::os::unix::fs::PermissionsExt;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Project {
@@ -22,7 +22,7 @@ struct CliArgs {
     command: Command,
 }
 
-fn write_public(src: &str, filename: &str) -> Result<()> {
+fn write_public(src: &[u8], filename: &str) -> Result<()> {
     let path = std::path::Path::new("_public").join(filename);
 
     // Set write permissions before writing.
@@ -41,18 +41,18 @@ fn write_public(src: &str, filename: &str) -> Result<()> {
     Ok(())
 }
 
+fn write_static(filename: &str) -> Result<()> {
+    let path = std::path::Path::new("site/src/static").join(filename);
+    let src = std::fs::read(path)?;
+    write_public(&src, filename)
+}
+
 fn generate_site() -> Result<()> {
-    let src = std::fs::read_to_string("site/src/static/index.html")?;
-    write_public(&src, "index.html")?;
-
-    let style_src = std::fs::read_to_string("site/src/static/style.css")?;
-    write_public(&style_src, "style.css")?;
-
-    let script_src = std::fs::read_to_string("site/src/static/defer.js")?;
-    write_public(&script_src, "defer.js")?;
-
-    let script_src = std::fs::read_to_string("site/src/static/nodefer.js")?;
-    write_public(&script_src, "nodefer.js")
+    write_static("index.html")?;
+    write_static("style.css")?;
+    write_static("defer.js")?;
+    write_static("nodefer.js")?;
+    write_static("bushido.pdf")
 }
 
 fn main() -> Result<()> {

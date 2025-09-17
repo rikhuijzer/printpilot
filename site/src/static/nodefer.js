@@ -15,7 +15,7 @@ function readFromPtr(instance, ptr) {
     return decoder.decode(new Uint8Array(buffer, ptr, length));
 }
 
-function pass(core) {
+function pass() {
   const exports = core.instance.exports;
   const json = JSON.stringify({
     message: "Pass",
@@ -30,7 +30,8 @@ function pass(core) {
 
 WebAssembly.instantiateStreaming(fetch("core.wasm")).then(
   (core) => {
+    window.core = core;
     console.log("Loading of the PrintPilot WebAssembly library succeeded");
-    pass(core);
+    pass();
   },
 );

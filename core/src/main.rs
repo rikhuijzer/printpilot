@@ -42,11 +42,22 @@ where
     }
 }
 
+#[derive(Serialize)]
+struct BookBodyResult {
+    msg: String,
+}
+
+fn book_body_impl(_body: BookBody) -> Result<BookBodyResult, String> {
+    Ok(BookBodyResult {
+        msg: "done".to_string(),
+    })
+}
+
 #[unsafe(no_mangle)]
 pub extern "C" fn book_body(ptr: *mut u8) {
-    let result = handle_cbor::<BookBody, _, _>(ptr, Ok);
+    let result = handle_cbor::<BookBody, _, _>(ptr, book_body_impl);
     if result.is_err() {
-        transfer::write_to_ptr(ptr, "error");
+        transfer::write_to_ptr(ptr, "2 error");
         return;
     }
     // transfer::write_to_ptr(ptr, "done");

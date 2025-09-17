@@ -17,11 +17,9 @@ function readFromPtr(instance, ptr) {
 
 function pass(core) {
   const exports = core.instance.exports;
-  console.log("Pass");
   const json = JSON.stringify({
     message: "Pass",
   });
-  console.log(json);
   const ptr = exports.alloc();
   writeToPtr(core.instance, ptr, json);
   exports.hi(ptr);
@@ -33,8 +31,6 @@ function pass(core) {
 WebAssembly.instantiateStreaming(fetch("core.wasm")).then(
   (core) => {
     console.log("Loading of the PrintPilot WebAssembly library succeeded");
-    console.log(core);
-    console.table(Object.getOwnPropertyNames(core.instance.exports))
     pass(core);
   },
 );

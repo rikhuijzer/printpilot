@@ -5,8 +5,10 @@
 <title>PrintPilot.org</title>
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width'>
-<script src='script.js'></script>
 <link rel='stylesheet' href='style.css'>
+<script src='nodefer.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/cbor-x@1.6.0/dist/index.js' defer></script>
+<script src='defer.js' defer></script>
 </head>
 
 <body>
@@ -37,13 +39,12 @@
             See <a href="https://huijzer.xyz/posts/98/printing-a-book-at-home-with-minimal-equipment">Printing a Book at Home with Minimal Equipment</a> for more details.
             </p>
 
-
             <h2>Prepare the Book Body</h2>
             The text inside the book.<br>
             <br>
             <form id='form'>   
-                <input type='file' id='body' name='body' accept='application/pdf'><br>
-                <input type='submit' value='Upload'>
+                <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
+                <input type='submit' id='body-submit' value='Upload'>
             </form>
         </div>
     </div>

@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
 use clap::Subcommand;
-use clap::command;
 use std::os::unix::fs::PermissionsExt;
+use clap::command;
 
 #[derive(Subcommand, Debug, Clone, PartialEq, Eq)]
 enum Project {
@@ -48,8 +48,11 @@ fn generate_site() -> Result<()> {
     let style_src = std::fs::read_to_string("site/src/static/style.css")?;
     write_public(&style_src, "style.css")?;
 
-    let script_src = std::fs::read_to_string("site/src/static/script.js")?;
-    write_public(&script_src, "script.js")
+    let script_src = std::fs::read_to_string("site/src/static/defer.js")?;
+    write_public(&script_src, "defer.js")?;
+
+    let script_src = std::fs::read_to_string("site/src/static/nodefer.js")?;
+    write_public(&script_src, "nodefer.js")
 }
 
 fn main() -> Result<()> {

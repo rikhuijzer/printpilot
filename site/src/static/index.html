@@ -46,10 +46,17 @@
             </p>
             <br>
             <br>
-            <form id='form' style='margin-bottom: 150px;'>
+            <form id='form'>
                 <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
-                <input type='submit' id='body-submit' value='Upload'>
             </form>
+            <button id='body-reset' style='margin-bottom: 10px;'
+                onclick='resetBodyUpload()'>
+                Reset
+            </button>
+            <button id='body-submit' style='margin-bottom: 150px;'
+                onclick='submitBodyUpload(event)'>
+                Submit
+            </button>
             <br>
         </div>
     </div>

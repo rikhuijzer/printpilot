@@ -1,23 +1,22 @@
+function resetBodyUpload() {
+  const uploader = document.getElementById('body-upload');
+  uploader.value = '';
+}
 
-function addBodyUploadEventListener() {
+async function submitBodyUpload() {
+  let selectedFile = null;
   const uploader = document.getElementById('body-upload');
   const uploadButton = document.getElementById('body-submit');
-
-  let selectedFile = null;
-
-  uploadButton.addEventListener('click', async event => {
-    event.preventDefault();
     selectedFile = uploader.files[0];
     if (!selectedFile) {
-    // If no file is selected, download Bushido from the default link
-    selectedFile = await fetch('https://huijzer.xyz/files/3f72e1a95933453d.pdf')
-      .then(res => res.blob());
+        const content = await fetch('/bushido.pdf')
+            .then(res => res.blob());
+        selectedFile = new File([content], 'bushido.pdf');
     }
 
-    const encoded = CBOR.encode({file: selectedFile});
-
     console.log(selectedFile);
-  });
+    const encoder = new CBOR.Encoder();
+    const encoded = encoder.encode([{file: 'a'}]);
 }
 
 function addEventListeners() {

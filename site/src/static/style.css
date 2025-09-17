@@ -7,6 +7,8 @@
     --text: hsl(212, 90%, 7%);
     --border: hsl(0, 0%, 60%);
     --header: hsl(212, 90%, 18%);
+    --accent: hsl(212, 91%, 60%);
+    --visited: hsl(271, 68%, 32%);
 }
 
 body {
@@ -23,6 +25,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--header);
+    text-align: center;
     margin-top: 1.8em;
     line-height: 1.2;
 }

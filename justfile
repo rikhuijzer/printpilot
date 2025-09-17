@@ -12,9 +12,8 @@ generate-site:
 
     mkdir -p _public/
 
-    cargo build --bin=core --target wasm32-unknown-unknown
-    cp target/wasm32-unknown-unknown/debug/core.wasm _public/
-    cargo run --bin=site --profile=dev -- generate site
+    cd site/
+    cargo run -- generate site
 
 serve-site:
     #!{{shebang}}
@@ -30,7 +29,7 @@ serve-site:
     # will remain in use and a new server will fail to start.
     trap "kill $SERVER_PID" EXIT
 
+    cd site/
+
     # Run cargo in the foreground.
-    cargo build --bin=core --target wasm32-unknown-unknown
-    cp target/wasm32-unknown-unknown/debug/core.wasm _public/
-    cargo watch -x "run --bin=site --profile=dev -- generate site"
+    cargo watch -x "run -- generate site"

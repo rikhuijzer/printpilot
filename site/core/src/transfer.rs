@@ -13,7 +13,6 @@ pub extern "C" fn alloc(length: usize) -> *mut c_void {
     let ptr = buf.as_mut_ptr();
 
     mem::forget(buf);
-
     ptr
 }
 

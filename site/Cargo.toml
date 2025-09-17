@@ -1,11 +1,8 @@
 [package]
 name = "site"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
 readme = "../README.md"
 publish = false
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0"

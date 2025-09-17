@@ -8,7 +8,7 @@ fn main() {
     std::env::set_current_dir("core").expect("Failed to set dir to core");
 
     let status = Command::new("cargo")
-        .args(&["build", "--target", "wasm32-unknown-unknown"])
+        .args(["build", "--target", "wasm32-unknown-unknown"])
         .status()
         .expect("Failed to execute cargo build");
 

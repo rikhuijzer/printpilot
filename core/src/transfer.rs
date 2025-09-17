@@ -11,7 +11,6 @@ use std::os::raw::c_void;
 pub extern "C" fn alloc(length: usize) -> *mut c_void {
     let mut buf = Vec::with_capacity(length);
     let ptr = buf.as_mut_ptr();
-
     mem::forget(buf);
     ptr
 }

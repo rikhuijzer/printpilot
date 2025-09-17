@@ -49,7 +49,7 @@ pub extern "C" fn book_body(ptr: *mut u8) {
         transfer::write_to_ptr(ptr, "error");
         return;
     }
-    transfer::write_to_ptr(ptr, "done");
+    // transfer::write_to_ptr(ptr, "done");
 }
 
 pub fn main() {}

@@ -24,13 +24,13 @@ jobs:
           override: 'true'
           components: 'rustfmt, clippy'
         
-      - run: cargo build --target wasm32-unknown-unknown
-
       - if: github.ref != 'refs/heads/main'
         run: cargo fmt --all -- --check
 
       - if: github.ref != 'refs/heads/main'
         run: cargo clippy -- -Dwarnings
+
+      - run: cargo build --target wasm32-unknown-unknown
 
       - uses: taiki-e/install-action@v2
         with:

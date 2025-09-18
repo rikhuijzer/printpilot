@@ -1,6 +1,10 @@
 use std::process::Command;
 
 fn main() {
+    println!("cargo::rerun-if-changed=core/Cargo.toml");
+    println!("cargo::rerun-if-changed=core/src/main.rs");
+    println!("cargo::rerun-if-changed=core/src/transfer.rs");
+
     let root_dir = std::env::current_dir().unwrap();
 
     std::fs::create_dir_all(root_dir.join("_public")).expect("Failed to create _public directory");

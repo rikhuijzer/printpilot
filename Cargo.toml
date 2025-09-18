@@ -3,6 +3,7 @@ name = "site"
 edition = "2024"
 readme = "../README.md"
 repository = "https://github.com/rikhuijzer/printpilot"
+build = "build.rs"
 publish = false
 
 [dependencies]

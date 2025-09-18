@@ -3,6 +3,8 @@ use ciborium::de::from_reader;
 use ciborium::ser::into_writer;
 use serde::Deserialize;
 use serde::Serialize;
+use wasm_bindgen::prelude::*;
+use web_sys;
 
 #[derive(Deserialize, Serialize)]
 struct File {
@@ -61,6 +63,22 @@ pub extern "C" fn book_body(ptr: *mut u8) {
         return;
     }
     // transfer::write_to_ptr(ptr, "done");
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn submit_body_upload() {
+    // log("submit_body_upload");
+
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let body = document.body().expect("document should have a body");
+
+    // Manufacture the element we're gonna append
+    let val = document.create_element("p").unwrap();
+    val.set_text_content(Some("Hello from Rust!"));
+    document.body().unwrap().set_text_content(Some("from wasm"));
+
+    body.append_child(&val).unwrap();
 }
 
 pub fn main() {}

@@ -21,7 +21,7 @@ jobs:
         with:
           toolchain: 'stable'
           target: 'wasm32-unknown-unknown'
-          override: 'false'
+          override: 'true'
           components: 'rustfmt, clippy'
         
       - run: cargo build

@@ -57,6 +57,7 @@ fn book_body_impl(_body: BookBody) -> Result<BookBodyResult, String> {
 pub extern "C" fn book_body(ptr: *mut u8) {
     let result = handle_cbor::<BookBody, _, _>(ptr, book_body_impl);
     if result.is_err() {
+        // can now see this change in the received after reloading the page.
         transfer::write_to_ptr(ptr, "2 error");
         return;
     }

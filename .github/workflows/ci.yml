@@ -34,13 +34,13 @@ jobs:
 
       - uses: taiki-e/install-action@v2
         with:
-          tool: just
+          tool: trunk
 
-      - run: just generate-site
+      - run: trunk build
 
       - uses: cloudflare/wrangler-action@v3
         if: github.ref == 'refs/heads/main'
         with:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: pages deploy _public --project-name=printpilot --branch=main
+          command: pages deploy public --project-name=printpilot --branch=main

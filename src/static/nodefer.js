@@ -11,7 +11,9 @@ function pass() {
   // console.log(`Received: ${result}`);
 }
 
-WebAssembly.instantiateStreaming(fetch("core.wasm")).then(
+var importObject = { imports: { imported_func: arg => console.log(arg) } };
+
+WebAssembly.instantiateStreaming(fetch("core.wasm"), importObject).then(
   (core) => {
     window.core = core;
     console.log("Loading of the PrintPilot WebAssembly library succeeded");

@@ -1,28 +1,13 @@
 shebang := "/usr/bin/env bash"
 
-alias s := serve-site
+alias s := serve
 
 default:
     just --list
 
-generate-site:
+serve:
     #!{{shebang}}
 
     set -euo pipefail
 
-    cargo run -- generate site
-
-serve-site:
-    #!{{shebang}}
-
-    set -euo pipefail
-
-    # Using lomirus/live-server.
-    live-server --port 8080 _public/ & SERVER_PID=$!
-
-    # Trap to kill the server when the process exits. Without this, the port
-    # will remain in use and a new server will fail to start.
-    trap "kill $SERVER_PID" EXIT
-
-    # Run cargo in the foreground.
-    cargo watch -x "run -- generate site"
+    trunk serve

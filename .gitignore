@@ -1,4 +1,3 @@
 **/target
-_public/
-_data/
+public/
 Cargo.lock

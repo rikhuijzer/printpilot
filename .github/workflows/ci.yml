@@ -24,7 +24,7 @@ jobs:
           override: 'true'
           components: 'rustfmt, clippy'
         
-      - run: cargo build
+      - run: cargo build --target wasm32-unknown-unknown
 
       - if: github.ref != 'refs/heads/main'
         run: cargo fmt --all -- --check

@@ -1,5 +1,5 @@
-use web_sys::window;
 use wasm_bindgen::prelude::*;
+use web_sys::window;
 
 #[wasm_bindgen]
 extern "C" {

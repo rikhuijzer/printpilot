@@ -8,7 +8,20 @@ publish = false
 [dependencies]
 console_error_panic_hook = "0.1"
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
 
 [dependencies.web-sys]
 version = "0.3.80"
-features = ["Window", "Document", "File", "FileList", "HtmlElement", "HtmlInputElement", "Text"]
+features = [
+    "Document",
+    "File",
+    "FileList",
+    "HtmlElement",
+    "HtmlInputElement",
+    "Request",
+    "RequestInit",
+    "RequestMode",
+    "Response",
+    "Text",
+    "Window",
+]

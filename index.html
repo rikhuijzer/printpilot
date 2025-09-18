@@ -17,6 +17,12 @@
               <b>Turn PDFs into Books</b><br>
               <br>
             </center>
+            <center>
+                <b style='font-size: 30px;'>
+                    This site is a work in progress.<br>
+                    <br>
+                </b>
+            </center>
 
             <div style="max-width: 100%; text-align: center;">
                 <img src='https://huijzer.xyz/files/76198b12f1ccd4a4' alt='book print 1'
@@ -48,7 +54,7 @@
                 <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
             </form>
             <button id='body-reset' style='margin-bottom: 10px;'
-                onclick='resetBodyUpload()'>
+                onclick='wasmBindings.reset_body_upload()'>
                 Reset
             </button>
             <button id='body-submit' style='margin-bottom: 10px;'

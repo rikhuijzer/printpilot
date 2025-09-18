@@ -2,13 +2,11 @@
 <html lang='en'>
 
 <head>
-<title>PrintPilot.org</title>
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width'>
-<link rel='stylesheet' href='style.css'>
-<script src='nodefer.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/cbor-x@1.6.0/dist/index.js' defer></script>
-<script src='defer.js' defer></script>
+  <title>PrintPilot.org</title>
+  <link data-trunk rel="copy-dir" href="static">
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width'>
+  <link rel='stylesheet' href='/static/style.css'>
 </head>
 
 <body>
@@ -54,7 +52,7 @@
                 Reset
             </button>
             <button id='body-submit' style='margin-bottom: 150px;'
-                onclick='submitBodyUpload()'>
+                onclick='wasmBindings.submit_body_upload()'>
                 Submit
             </button>
             <br>

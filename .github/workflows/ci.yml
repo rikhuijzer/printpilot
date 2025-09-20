@@ -38,7 +38,7 @@ jobs:
         with:
           tool: trunk
 
-      - run: trunk build
+      - run: trunk build --release
 
       - uses: cloudflare/wrangler-action@v3
         if: github.ref == 'refs/heads/main'

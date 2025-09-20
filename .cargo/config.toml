@@ -1,4 +1,5 @@
 [build]
+# Setting default target for clippy to be able to build.
 target = "wasm32-unknown-unknown"
 
 [target.wasm32-unknown-unknown]

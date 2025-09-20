@@ -32,9 +32,22 @@ pub fn reset_body_upload() {
 }
 
 struct BodyUpload {
+    // The filename.
     name: String,
+    // The file blob.
+    data: JsValue,
+}
+
+impl BodyUpload {
     #[allow(dead_code)]
-    data: Uint8Array,
+    fn array_buffer(&self) -> Uint8Array {
+        web_sys::js_sys::Uint8Array::new(&self.data)
+    }
+}
+
+fn process_body_upload(body_upload: BodyUpload) {
+    let data = body_upload.array_buffer();
+    console_log!("Data: {:?}", data);
 }
 
 #[wasm_bindgen]
@@ -55,7 +68,6 @@ pub async fn submit_body_upload() {
         }
         let data = resp.blob().unwrap();
         let data = wasm_bindgen_futures::JsFuture::from(data).await.unwrap();
-        let data = web_sys::js_sys::Uint8Array::new(&data);
         BodyUpload {
             name: "bushido.pdf".to_string(),
             data,
@@ -64,7 +76,6 @@ pub async fn submit_body_upload() {
         let file = files.item(0).expect("Failed to get file");
         let data = file.array_buffer();
         let data = wasm_bindgen_futures::JsFuture::from(data).await.unwrap();
-        let data = web_sys::js_sys::Uint8Array::new(&data);
         BodyUpload {
             name: file.name().to_string(),
             data,
@@ -72,4 +83,5 @@ pub async fn submit_body_upload() {
     };
     let body_output = document.get_element_by_id("body-output").unwrap();
     body_output.set_inner_html(&format!("File selected: {}", body_upload.name));
+    process_body_upload(body_upload);
 }

@@ -1,11 +1,12 @@
+use lopdf::Document;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::js_sys::Uint8Array;
-use web_sys::window;
 use web_sys::Request;
 use web_sys::RequestInit;
 use web_sys::RequestMode;
 use web_sys::Response;
+use web_sys::js_sys::Uint8Array;
+use web_sys::window;
 
 async fn fetch(url: &str) -> Result<web_sys::Response, JsValue> {
     let opts = RequestInit::new();
@@ -35,19 +36,13 @@ struct BodyUpload {
     // The filename.
     name: String,
     // The file blob.
-    data: JsValue,
-}
-
-impl BodyUpload {
-    #[allow(dead_code)]
-    fn array_buffer(&self) -> Uint8Array {
-        web_sys::js_sys::Uint8Array::new(&self.data)
-    }
+    data: Vec<u8>,
 }
 
 fn process_body_upload(body_upload: BodyUpload) {
-    let data = body_upload.array_buffer();
-    console_log!("Data: {:?}", data);
+    let data = body_upload.data;
+    console_log!("Data len: {:?}", data.len());
+    let _doc = Document::load_mem(&data).unwrap();
 }
 
 #[wasm_bindgen]
@@ -59,7 +54,7 @@ pub async fn submit_body_upload() {
         .expect("Element is not an HtmlInputElement");
     let files = input.files().expect("No files property on input element");
     let body_upload = if files.length() == 0 {
-        let resp = fetch("/bushido.pdf").await.unwrap();
+        let resp = fetch("/static/bushido.pdf").await.unwrap();
         let body_output = document.get_element_by_id("body-output").unwrap();
         body_output.set_inner_html(&format!("File selected: {}", resp.status()));
         if resp.status() != 200 {
@@ -67,7 +62,11 @@ pub async fn submit_body_upload() {
             return;
         }
         let data = resp.blob().unwrap();
-        let data = wasm_bindgen_futures::JsFuture::from(data).await.unwrap();
+        let data = JsFuture::from(data).await.unwrap();
+        let blob = data.dyn_into::<web_sys::Blob>().unwrap();
+        let array_buffer = JsFuture::from(blob.array_buffer()).await.unwrap();
+        let uint8_array = Uint8Array::new(&array_buffer);
+        let data = uint8_array.to_vec();
         BodyUpload {
             name: "bushido.pdf".to_string(),
             data,
@@ -75,7 +74,9 @@ pub async fn submit_body_upload() {
     } else {
         let file = files.item(0).expect("Failed to get file");
         let data = file.array_buffer();
-        let data = wasm_bindgen_futures::JsFuture::from(data).await.unwrap();
+        let data = JsFuture::from(data).await.unwrap();
+        let uint8_array = Uint8Array::new(&data);
+        let data = uint8_array.to_vec();
         BodyUpload {
             name: file.name().to_string(),
             data,

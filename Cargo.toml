@@ -28,3 +28,7 @@ features = [
     "Url",
     "Window",
 ]
+
+[profile.dev]
+#  Otherwise, simple PDF modifications take multiple seconds.
+opt-level = 1

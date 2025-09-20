@@ -5,6 +5,7 @@ use web_sys::Request;
 use web_sys::RequestInit;
 use web_sys::RequestMode;
 use web_sys::Response;
+use web_sys::js_sys::Array;
 use web_sys::js_sys::Uint8Array;
 use web_sys::window;
 
@@ -43,14 +44,18 @@ fn process_body_upload(body_upload: BodyUpload) -> Vec<u8> {
     let data = body_upload.data;
     console_log!("Data len: {:?}", data.len());
     let mut doc = Document::load_mem(&data).unwrap();
-    for (_, page_id) in doc.get_pages() {
+    let n_pages = doc.get_pages().len().max(10);
+    for (_, page_id) in doc.get_pages().iter().take(n_pages) {
         let page_dict = doc
-            .get_object_mut(page_id)
+            .get_object_mut(*page_id)
             .and_then(|obj| obj.as_dict_mut())
             .expect("Missing page!");
 
         // Get the current rotation if any; the default is 0
-        let current_rotation = page_dict.get(b"Rotate").and_then(|obj| obj.as_i64()).unwrap_or(0);
+        let current_rotation = page_dict
+            .get(b"Rotate")
+            .and_then(|obj| obj.as_i64())
+            .unwrap_or(0);
 
         // Add the angle and update
         page_dict.set("Rotate", (current_rotation + 180) % 360);
@@ -60,13 +65,14 @@ fn process_body_upload(body_upload: BodyUpload) -> Vec<u8> {
     target
 }
 
-fn open_pdf(data: Vec<u8>) {
-    let data = web_sys::js_sys::Uint8Array::from(&data[..]);
+fn create_pdf_link(data: Vec<u8>) -> String {
+    let data = web_sys::js_sys::Uint8Array::from(data.as_slice());
+    let data = Array::of1(&data);
     let blob_properties = web_sys::BlobPropertyBag::new();
     blob_properties.set_type("application/pdf");
-    let blob = web_sys::Blob::new_with_u8_array_sequence_and_options(&data, &blob_properties).unwrap();
-    let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
-    web_sys::window().unwrap().open_with_url(&url).unwrap();
+    let blob =
+        web_sys::Blob::new_with_u8_array_sequence_and_options(&data, &blob_properties).unwrap();
+    web_sys::Url::create_object_url_with_blob(&blob).unwrap()
 }
 
 #[wasm_bindgen]
@@ -106,10 +112,12 @@ pub async fn submit_body_upload() {
             data,
         }
     };
+    let name = body_upload.name.clone();
     let body_output = document.get_element_by_id("body-output").unwrap();
-    body_output.set_inner_html(&format!("File selected: {}", body_upload.name));
 
     let data = process_body_upload(body_upload);
-    open_pdf(data);
-    
+    let url = create_pdf_link(data);
+    body_output.set_inner_html(&format!(
+        r#"<a href="{url}" target="_blank">Open {name}</a>"#
+    ));
 }

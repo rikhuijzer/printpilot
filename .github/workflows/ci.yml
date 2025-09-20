@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  # I have no idea why CI ignores .cargo/config.toml.
+  # I have no idea why CI ignores this flag from .cargo/config.toml.
+  # It does respect the build target in .cargo/config.toml.
   RUSTFLAGS: '--cfg=getrandom_backend="wasm_js"'
 
 jobs:

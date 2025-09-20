@@ -31,6 +31,9 @@ jobs:
         run: cargo clippy -- -Dwarnings
 
       - run: cargo build --target wasm32-unknown-unknown
+        env:
+          # I have no idea why CI ignores .cargo/config.toml.
+          RUSTFLAGS: '--cfg=getrandom_backend="wasm_js"'
 
       - uses: taiki-e/install-action@v2
         with:

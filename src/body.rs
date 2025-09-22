@@ -134,8 +134,9 @@ fn process_body_upload(body_upload: BodyUpload) -> Vec<u8> {
     console_log!("half: {:?}", half);
     let indices = &pages_indices(&doc);
 
-    let mut out = fake_document();
-    let pages_id = out.new_object_id();
+    // let mut out = fake_document();
+    // let pages_id = out.new_object_id();
+    doc.delete_pages(&(1..n as u32).collect::<Vec<u32>>());
     for i in python_range(ceildiv(half, 2)) {
         console_log!("i: {:?}", i);
         // half + 2 : 2 : n
@@ -149,7 +150,7 @@ fn process_body_upload(body_upload: BodyUpload) -> Vec<u8> {
         } else {
             blank_page()
         };
-        let some_page_id = indices[&1];
+        let some_page_id = indices[&(i as u32 + 1)];
         doc.add_page_contents(some_page_id, left_content).unwrap();
     }
     let mut target = Vec::new();

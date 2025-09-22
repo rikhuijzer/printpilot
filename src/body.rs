@@ -149,8 +149,8 @@ fn process_body_upload(body_upload: BodyUpload) -> Vec<u8> {
         } else {
             blank_page()
         };
-        // let some_page_id = indices[&1];
-        out.add_page_contents(pages_id, left_content).unwrap();
+        let some_page_id = indices[&1];
+        doc.add_page_contents(some_page_id, left_content).unwrap();
     }
     let mut target = Vec::new();
     doc.save_to(&mut target).unwrap();

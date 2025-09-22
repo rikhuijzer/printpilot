@@ -1,21 +1,57 @@
 // Using PDFLib since lopdf works, but is extremely low-level (unwieldy).
 
+function loadPdf() {
+  // Get the input element
+  const input = document.getElementById("body-upload");
+  if (!input || input.type !== "file") {
+    console.error("Element is not an HtmlInputElement");
+    return;
+  }
+  const files = input.files;
+  let filePromise;
+  let name;
+  if (!files || files.length === 0) {
+    // No file selected, fetch default
+    filePromise = fetch("/static/bushido.pdf")
+      .then(async resp => {
+        const bodyOutput = document.getElementById("body-output");
+        if (bodyOutput) {
+          bodyOutput.innerHTML = `File selected: ${resp.status}`;
+        }
+        if (resp.status !== 200) {
+          console.log("Failed to fetch bushido.pdf");
+          throw new Error("Failed to fetch bushido.pdf");
+        }
+        const blob = await resp.blob();
+        name = "bushido.pdf";
+        return blob.arrayBuffer();
+      });
+  } else {
+    const file = files[0];
+    name = file.name;
+    filePromise = file.arrayBuffer();
+  }
+  return filePromise.then(arrayBuffer => {
+    return {
+      name: name,
+      data: new Uint8Array(arrayBuffer)
+    };
+  });
+}
+
 async function createPdf() {
-  const pdfDoc = await PDFLib.PDFDocument.create()
-  const timesRomanFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman)
+  let pdf = await loadPdf();
+  console.log(pdf);
 
-  const page = pdfDoc.addPage()
-  const { width, height } = page.getSize()
-  const fontSize = 30
-  page.drawText('Creating PDFs in JavaScript is awesome!', {
-    x: 50,
-    y: height - 4 * fontSize,
-    size: fontSize,
-    font: timesRomanFont,
-    color: PDFLib.rgb(0, 0.53, 0.71),
-  })
+  // Default export is a4 paper, portrait, using millimeters for units
+  const doc = new jspdf.jsPDF();
 
-  const pdfBytes = await pdfDoc.save();
+  doc.text("Hello world!", 10, 10);
+  let pdfBytes = doc.output("arraybuffer");
+
+  // let pdfBytes = await pdfDoc.save();
+  // let name = pdf.name;
+
   const uint8Array = new Uint8Array(pdfBytes);
   const blob = new Blob([uint8Array], { type: "application/pdf" });
   const objectUrl = URL.createObjectURL(blob);

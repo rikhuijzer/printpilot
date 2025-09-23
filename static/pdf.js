@@ -40,16 +40,40 @@ function loadPdf() {
 }
 
 async function addJoinedPage(src, dst, left_index, right_index) {
+  const n = src.getPages().length;
+  if (n <= left_index && n <= right_index) {
+    return;
+  }
   const height = PDFLib.PageSizes.A4[0];
   const width = PDFLib.PageSizes.A4[1];
   const page = dst.addPage([width, height]);
-  const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
-  page.drawPage(right, { x: width / 2, y: 0 });
-  page.drawPage(left, { x: 0, y: 0 });
+  if (left_index < n && right_index < n) {
+    const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
+    page.drawPage(right, { x: width / 2, y: 0 });
+    page.drawPage(left, { x: 0, y: 0 });
+  } else if (left_index < n) {
+    const [left] = await dst.embedPdf(src, [left_index]);
+    page.drawPage(left, { x: 0, y: 0 });
+  } else if (right_index < n) {
+    const [right] = await dst.embedPdf(src, [right_index]);
+    page.drawPage(right, { x: width / 2, y: 0 });
+  }
 }
 
 function ceildiv(a, b) {
   return Math.ceil(a / b);
+}
+
+async function setPdfLink(doc, id, name) {
+  let pdfBytes = await doc.save();
+  const uint8Array = new Uint8Array(pdfBytes);
+  const blob = new Blob([uint8Array], { type: "application/pdf" });
+  const objectUrl = URL.createObjectURL(blob);
+
+  const bodyOutput = document.getElementById(id);
+  if (bodyOutput) {
+    bodyOutput.innerHTML = `<a href="${objectUrl}" target="_blank">Open ${name}</a>`;
+  }
 }
 
 async function createPdf() {
@@ -58,24 +82,44 @@ async function createPdf() {
 
   // Default export is a4 paper, portrait, using millimeters for units
   const doc = await PDFLib.PDFDocument.load(pdf.data);
-  const out = await PDFLib.PDFDocument.create();
+  const even = await PDFLib.PDFDocument.create();
+  const odd = await PDFLib.PDFDocument.create();
 
-  const [page] = await out.copyPages(doc, [0]);
-  out.addPage(page);
+  const n = doc.getPages().length;
+  console.log(`n: ${n}`);
+  let half = ceildiv(n, 2);
+  // If n is odd, we need to add one since we are printing duplex.
+  // Can lead to 3 empty pages in the worst case.
+  half = n % 2 == 0 ? half : half + 1;
+  console.log(`half: ${half}`);
+  for (let i = 0; i < ceildiv(half, 2); i++) {
+    console.log(`i: ${i}`);
+    // half + 2 : 2 : n
+    const left_index = (half + 2) + (2 * i);
+    console.log(`left_index: ${left_index}`);
+    // 2 : 2 : half
+    const right_index = (1 + (2 * i));
+    console.log(`right_index: ${right_index}`);
+    // Flip since we're printing on the back of the odd pages.
+    await addJoinedPage(doc, even, right_index, left_index);
+  }
 
-  await addJoinedPage(doc, out, 1, 2);
-  await addJoinedPage(doc, out, 3, 5);
+  for (let i = 0; i < ceildiv(half, 2); i++) {
+    console.log(`i: ${i}`);
+    // half + 1 : 2 : n
+    const left_index = (half + 1) + (2 * i);
+    console.log(`left_index: ${left_index}`);
+    const right_index = 2 * i;
+    console.log(`right_index: ${right_index}`);
+    await addJoinedPage(doc, odd, left_index, right_index);
+  }
 
-  const pdfBytes = await out.save();
+  const evenBytes = await even.save();
+  const oddBytes = await odd.save();
 
+  await setPdfLink(even, "body-output-even", "even pages");
+  await setPdfLink(odd, "body-output-odd", "odd pages");
+  // await setPdfLink(doc, "body-output-all", "all pages");
   // let name = pdf.name;
 
-  const uint8Array = new Uint8Array(pdfBytes);
-  const blob = new Blob([uint8Array], { type: "application/pdf" });
-  const objectUrl = URL.createObjectURL(blob);
-
-  const bodyOutput = document.getElementById("body-output");
-  if (bodyOutput) {
-    bodyOutput.innerHTML = `<a href="${objectUrl}" target="_blank">Open PDF</a>`;
-  }
 }

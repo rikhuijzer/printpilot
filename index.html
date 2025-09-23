@@ -48,7 +48,7 @@
             <h2>Prepare the Book Body</h2>
             <p>
             The text inside the book.
-            Defaults to <a href='/bushido.pdf'>Bushido</a>.
+            Defaults to <a href='/static/bushido.pdf'>Bushido</a>.
             </p>
             <br>
             <br>
@@ -60,14 +60,10 @@
                 Reset
             </button>
             <button id='body-submit' style='margin-bottom: 10px;'
-                onclick='wasmBindings.submit_body_upload()'>
+                onclick='createPdf()'>
                 Submit
             </button>
-            <button id='body-submit-js' style='margin-bottom: 10px;'
-                onclick='createPdf()'>
-                Submit JS
-            </button>
-            <div style='margin-bottom: 150px;'>
+            <div class='body-output-container'>
                 <div id='body-output-all'></div>
                 <div id='body-output-even'></div>
                 <div id='body-output-odd'></div>

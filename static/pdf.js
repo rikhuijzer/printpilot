@@ -72,7 +72,7 @@ async function setPdfLink(doc, id, name) {
 
   const bodyOutput = document.getElementById(id);
   if (bodyOutput) {
-    bodyOutput.innerHTML = `<a href="${objectUrl}" target="_blank">Open ${name}</a>`;
+    bodyOutput.innerHTML = `<button class='body-output' onclick="window.open('${objectUrl}', '_blank')">Open ${name}</button>`;
   }
 }
 

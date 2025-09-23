@@ -4,16 +4,16 @@ Turn PDFs into Books.
 
 ## Development
 
-This project depends on `cargo` and [`trunk`](https://trunkrs.dev/).
+This project depends on `cargo`, [`just`](https://github.com/casey/just) and [`trunk`](https://trunkrs.dev/).
 
 To build the project make sure both are installed and run:
 
 ```
-trunk build
+just build
 ```
 
 To serve the project, run:
 
 ```
-trunk serve
+just serve
 ```

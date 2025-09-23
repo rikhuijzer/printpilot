@@ -2,11 +2,13 @@
 <html lang='en'>
 
 <head>
-  <title>PrintPilot.org</title>
+  <title>Print Pilot</title>
   <link data-trunk rel="copy-dir" href="static">
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width'>
   <link rel='stylesheet' href='/static/style.css'>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src='/static/pdf.js' defer></script>
 </head>
 
 <body>
@@ -46,7 +48,7 @@
             <h2>Prepare the Book Body</h2>
             <p>
             The text inside the book.
-            Defaults to <a href='/bushido.pdf'>Bushido</a>.
+            Defaults to <a href='/static/bushido.pdf'>Bushido</a>.
             </p>
             <br>
             <br>
@@ -58,10 +60,24 @@
                 Reset
             </button>
             <button id='body-submit' style='margin-bottom: 10px;'
-                onclick='wasmBindings.submit_body_upload()'>
+                onclick='createPdf()'>
                 Submit
             </button>
-            <div id='body-output' style='margin-bottom: 150px;'></div>
+            <div 
+                style='text-align: center; margin-top: 10px; margin-bottom: 4px;'
+                id='body-output-name'>
+            </div>
+            <div class='body-output-container'>
+                <fieldset class='body-output-fieldset' style='display: none;'>
+                    <legend>Simplex (single sided) printer</legend>
+                    <div id='body-output-even'></div>
+                    <div id='body-output-odd'></div>
+                </fieldset>
+                <fieldset class='body-output-fieldset' style='display: none;'>
+                    <legend>Duplex (double sided) printer</legend>
+                    <div id='body-output-all'></div>
+                </fieldset>
+            </div>
             <br>
         </div>
     </div>

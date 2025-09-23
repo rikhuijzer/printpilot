@@ -81,3 +81,27 @@ input[type="submit"]:hover {
 input[type="submit"]:disabled {
     opacity: 0.5;
 }
+
+.body-output-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 10px;
+    margin-bottom: 150px;
+    justify-content: center;
+    align-items: center;
+}
+
+.body-output-fieldset {
+    flex-wrap: wrap;
+    gap: 10px 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.body-output {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+

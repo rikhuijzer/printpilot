@@ -174,7 +174,7 @@ async function createCover() {
   doc.registerFontkit(fontkit);
   // const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
 
-  const fontBytes = await fetch('https://fonts.gstatic.com/s/ebgaramond/v27/SlGTmQWmv5MN3EpAcnBz5W0EAVxt0G0biEntp43Qt6E.ttf').then(res => res.arrayBuffer());
+  const fontBytes = await fetch('/static/EBGaramond-Italic-VariableFont_wght.ttf').then(res => res.arrayBuffer());
   const font = await doc.embedFont(fontBytes);
 
   const page = doc.addPage([A4Width, A4Height]);

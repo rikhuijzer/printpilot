@@ -44,12 +44,12 @@ async function createPdf() {
   console.log(pdf);
 
   // Default export is a4 paper, portrait, using millimeters for units
-  const doc = new jspdf.jsPDF();
+  const doc = await PDFLib.PDFDocument.load(pdf.data);
 
-  doc.text("Hello world!", 10, 10);
-  let pdfBytes = doc.output("arraybuffer");
+  const pages = doc.getPages();
+  pages[0].drawText("Hello world!");
+  const pdfBytes = await doc.save();
 
-  // let pdfBytes = await pdfDoc.save();
   // let name = pdf.name;
 
   const uint8Array = new Uint8Array(pdfBytes);

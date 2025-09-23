@@ -171,7 +171,11 @@ async function createPdf() {
 
 async function createCover() {
   const doc = await PDFLib.PDFDocument.create();
-  const font = await doc.embedFont(PDFLib.StandardFonts.Helvetica);
+  doc.registerFontkit(fontkit);
+  // const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
+
+  const fontBytes = await fetch('https://fonts.gstatic.com/s/ebgaramond/v27/SlGTmQWmv5MN3EpAcnBz5W0EAVxt0G0biEntp43Qt6E.ttf').then(res => res.arrayBuffer());
+  const font = await doc.embedFont(fontBytes);
 
   const page = doc.addPage([A4Width, A4Height]);
   const titleElem = document.getElementById("cover-title");

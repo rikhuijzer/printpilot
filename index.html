@@ -63,10 +63,20 @@
                 onclick='createPdf()'>
                 Submit
             </button>
+            <div 
+                style='text-align: center; margin-top: 10px; margin-bottom: 4px;'
+                id='body-output-name'>
+            </div>
             <div class='body-output-container'>
-                <div id='body-output-all'></div>
-                <div id='body-output-even'></div>
-                <div id='body-output-odd'></div>
+                <fieldset class='body-output-fieldset' style='display: none;'>
+                    <legend>Simplex (single sided) printer</legend>
+                    <div id='body-output-even'></div>
+                    <div id='body-output-odd'></div>
+                </fieldset>
+                <fieldset class='body-output-fieldset' style='display: none;'>
+                    <legend>Duplex (double sided) printer</legend>
+                    <div id='body-output-all'></div>
+                </fieldset>
             </div>
             <br>
         </div>

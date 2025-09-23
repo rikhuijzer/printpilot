@@ -64,6 +64,13 @@ function ceildiv(a, b) {
   return Math.ceil(a / b);
 }
 
+function resetPdfLink(id) {
+  const bodyOutput = document.getElementById(id);
+  if (bodyOutput) {
+    bodyOutput.innerHTML = "<div></div>";
+  }
+}
+
 async function setPdfLink(doc, id, name) {
   let pdfBytes = await doc.save();
   const uint8Array = new Uint8Array(pdfBytes);
@@ -77,6 +84,17 @@ async function setPdfLink(doc, id, name) {
 }
 
 async function createPdf() {
+  resetPdfLink("body-output-name");
+  resetPdfLink("body-output-even");
+  resetPdfLink("body-output-odd");
+  resetPdfLink("body-output-all");
+  const fieldsets = document.getElementsByClassName("body-output-fieldset");
+  for (const fieldset of fieldsets) {
+    if (fieldset) {
+      fieldset.style.display = "none";
+    }
+  }
+
   let pdf = await loadPdf();
   console.log(pdf);
 
@@ -103,6 +121,17 @@ async function createPdf() {
     // Flip since we're printing on the back of the odd pages.
     await addJoinedPage(doc, even, right_index, left_index);
   }
+  const evenBytes = await even.save();
+  const outputName = document.getElementById("body-output-name");
+  if (outputName) {
+    outputName.innerHTML = `${pdf.name}:`;
+  }
+  for (const fieldset of fieldsets) {
+      if (fieldset) {
+      fieldset.style.display = "flex";
+    }
+  }
+  await setPdfLink(even, "body-output-even", "EVEN pages");
 
   for (let i = 0; i < ceildiv(half, 2); i++) {
     console.log(`i: ${i}`);
@@ -113,13 +142,29 @@ async function createPdf() {
     console.log(`right_index: ${right_index}`);
     await addJoinedPage(doc, odd, left_index, right_index);
   }
-
-  const evenBytes = await even.save();
   const oddBytes = await odd.save();
+  await setPdfLink(odd, "body-output-odd", "ODD pages");
 
-  await setPdfLink(even, "body-output-even", "even pages");
-  await setPdfLink(odd, "body-output-odd", "odd pages");
-  // await setPdfLink(doc, "body-output-all", "all pages");
-  // let name = pdf.name;
+  const all = await PDFLib.PDFDocument.create();
+  // Merge odd and even PDFs.
+  const oddPages = await odd.getPages();
+  const evenPages = await even.getPages();
+  const totalPages = oddPages.length + evenPages.length;
+
+  let oddIdx = 0;
+  let evenIdx = 0;
+  for (let i = 0; i < totalPages; i++) {
+    if (i % 2 === 0 && oddIdx < oddPages.length) {
+      const [oddPage] = await all.copyPages(odd, [oddIdx]);
+      all.addPage(oddPage);
+      oddIdx++;
+    } else if (i % 2 === 1 && evenIdx < evenPages.length) {
+      const [evenPage] = await all.copyPages(even, [evenIdx]);
+      all.addPage(evenPage);
+      evenIdx++;
+    }
+  }
+
+  await setPdfLink(all, "body-output-all", "ALL pages");
 
 }

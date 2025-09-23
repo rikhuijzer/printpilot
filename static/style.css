@@ -91,6 +91,13 @@ input[type="submit"]:disabled {
     align-items: center;
 }
 
+.body-output-fieldset {
+    flex-wrap: wrap;
+    gap: 10px 10px;
+    justify-content: center;
+    align-items: center;
+}
+
 .body-output {
     display: inline-block;
     margin-left: 0;

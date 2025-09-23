@@ -48,6 +48,10 @@ async function addJoinedPage(src, dst, left_index, right_index) {
   page.drawPage(left, { x: 0, y: 0 });
 }
 
+function ceildiv(a, b) {
+  return Math.ceil(a / b);
+}
+
 async function createPdf() {
   let pdf = await loadPdf();
   console.log(pdf);
@@ -59,8 +63,8 @@ async function createPdf() {
   const [page] = await out.copyPages(doc, [0]);
   out.addPage(page);
 
-  addJoinedPage(doc, out, 1, 2);
-  addJoinedPage(doc, out, 3, 5);
+  await addJoinedPage(doc, out, 1, 2);
+  await addJoinedPage(doc, out, 3, 5);
 
   const pdfBytes = await out.save();
 

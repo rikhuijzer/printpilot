@@ -39,6 +39,15 @@ function loadPdf() {
   });
 }
 
+async function addJoinedPage(src, dst, left_index, right_index) {
+  const height = PDFLib.PageSizes.A4[0];
+  const width = PDFLib.PageSizes.A4[1];
+  const page = dst.addPage([width, height]);
+  const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
+  page.drawPage(right, { x: width / 2, y: 0 });
+  page.drawPage(left, { x: 0, y: 0 });
+}
+
 async function createPdf() {
   let pdf = await loadPdf();
   console.log(pdf);
@@ -50,7 +59,9 @@ async function createPdf() {
   const [page] = await out.copyPages(doc, [0]);
   out.addPage(page);
 
-  // const pages = doc.getPages();
+  addJoinedPage(doc, out, 1, 2);
+  addJoinedPage(doc, out, 3, 5);
+
   const pdfBytes = await out.save();
 
   // let name = pdf.name;

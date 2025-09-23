@@ -9,11 +9,6 @@
   <link rel='stylesheet' href='/static/style.css'>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://unpkg.com/@pdf-lib/fontkit@0.0.4/dist/fontkit.umd.min.js"></script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
-
   <script src='/static/pdf.js'></script>
 </head>
 
@@ -59,9 +54,7 @@
             </p>
             <br>
             <br>
-            <form id='form'>
-                <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
-            </form>
+            <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
             <button id='body-reset' style='margin-bottom: 10px;'
                 onclick='wasmBindings.reset_body_upload()'>
                 Reset
@@ -88,8 +81,11 @@
             <br>
 
             <h2>Prepare the Book Cover</h2>
+            <input type='file' id='front-upload' name='front-upload' accept='application/pdf'><br>
+            <input type='file' id='back-upload' name='back-upload' accept='application/pdf'><br>
             <div style='margin-bottom: 100px;'>
-                <input type='text' id='cover-title' placeholder='Title'><br>
+                <label for='cover-title'>Spine text</label><br>
+                <input type='text' id='cover-title' placeholder='Title - Author'><br>
                 <button id='cover-submit' style='margin-bottom: 10px;'
                     onclick='createCover()'>
                     Create Book Cover

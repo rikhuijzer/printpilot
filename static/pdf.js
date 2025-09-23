@@ -1,4 +1,5 @@
 // Using PDFLib since lopdf works, but is extremely low-level (unwieldy).
+// I also couldn't get Typst to compile.
 
 function loadPdf() {
   // Get the input element
@@ -50,14 +51,14 @@ async function addJoinedPage(src, dst, left_index, right_index) {
   const page = dst.addPage([A4Width, A4Height]);
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
-    page.drawPage(right, { x: width / 2, y: 0 });
+    page.drawPage(right, { x: A4Width / 2, y: 0 });
     page.drawPage(left, { x: 0, y: 0 });
   } else if (left_index < n) {
     const [left] = await dst.embedPdf(src, [left_index]);
     page.drawPage(left, { x: 0, y: 0 });
   } else if (right_index < n) {
     const [right] = await dst.embedPdf(src, [right_index]);
-    page.drawPage(right, { x: width / 2, y: 0 });
+    page.drawPage(right, { x: A4Width / 2, y: 0 });
   }
 }
 
@@ -171,20 +172,26 @@ async function createPdf() {
 
 async function createCover() {
   const doc = await PDFLib.PDFDocument.create();
-  doc.registerFontkit(fontkit);
-  // const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
+  // doc.registerFontkit(fontkit);
 
-  const fontBytes = await fetch('/static/EBGaramond-Italic-VariableFont_wght.ttf').then(res => res.arrayBuffer());
-  const font = await doc.embedFont(fontBytes);
+  // const fontBytes = await fetch('/static/EBGaramond-Italic-VariableFont_wght.ttf').then(res => res.arrayBuffer());
+  const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
 
-  const page = doc.addPage([A4Width, A4Height]);
-  const titleElem = document.getElementById("cover-title");
-  const title = titleElem.value;
-  page.drawText(title, {
-    x: 10,
-    y: 10,
+  const front = doc.addPage([A4Width, A4Height]);
+  const titleElem = document.getElementById('cover-title');
+  let text = titleElem.value;
+  const fontSize = 24;
+  const textWidth = font.widthOfTextAtSize(text, fontSize);
+  const textHeight = font.heightAtSize(fontSize);
+  front.drawText(text, {
+    x: A4Width / 2 + textHeight / 2,
+    y: A4Height / 2 - textHeight / 2,
     font,
-    fontSize: 12,
+    fontSize,
+    rotate: PDFLib.degrees(90),
   });
+
+  const back = doc.addPage([A4Width, A4Height]);
+
   await setPdfLink(doc, "cover-output", "Cover");
 }

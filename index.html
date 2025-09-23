@@ -43,7 +43,7 @@
             </div><br>
             <p>
             This webpage provides a tool turns a PDF file containing the text of a book into a PDF file on A4 where the pages are printed in landscape side-by-side so that you can cut the pages and turn it into an A5 book.
-            See <a href="https://huijzer.xyz/posts/98/printing-a-book-at-home-with-minimal-equipment">Printing a Book at Home with Minimal Equipment</a> for more details.
+            See <a href="https://huijzer.xyz/posts/98/printing-a-book-at-home-with-minimal-equipment">Printing a Book at Home with Minimal Equipment</a> for a walkthrough.
             </p>
 
             <h2>Prepare the Book Body</h2>
@@ -62,7 +62,7 @@
             </button>
             <button id='body-submit' style='margin-bottom: 10px;'
                 onclick='createPdf()'>
-                Submit
+                Create Book Body
             </button>
             <div 
                 style='text-align: center; margin-top: 10px; margin-bottom: 4px;'
@@ -80,6 +80,17 @@
                 </fieldset>
             </div>
             <br>
+
+            <h2>Prepare the Book Cover</h2>
+            <div style='margin-bottom: 100px;'>
+                <input type='text' id='cover-title' placeholder='Title'><br>
+                <button id='cover-submit' style='margin-bottom: 10px;'
+                    onclick='createCover()'>
+                    Create Book Cover
+                </button>
+                <div id='cover-output'></div>
+            </div>
+            <p>
         </div>
     </div>
 </body>

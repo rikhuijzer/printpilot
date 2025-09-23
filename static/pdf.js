@@ -39,14 +39,15 @@ function loadPdf() {
   });
 }
 
+const A4Height = PDFLib.PageSizes.A4[0];
+const A4Width = PDFLib.PageSizes.A4[1];
+
 async function addJoinedPage(src, dst, left_index, right_index) {
   const n = src.getPages().length;
   if (n <= left_index && n <= right_index) {
     return;
   }
-  const height = PDFLib.PageSizes.A4[0];
-  const width = PDFLib.PageSizes.A4[1];
-  const page = dst.addPage([width, height]);
+  const page = dst.addPage([A4Width, A4Height]);
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
     page.drawPage(right, { x: width / 2, y: 0 });
@@ -166,5 +167,20 @@ async function createPdf() {
   }
 
   await setPdfLink(all, "body-output-all", "ALL pages");
+}
 
+async function createCover() {
+  const doc = await PDFLib.PDFDocument.create();
+  const font = await doc.embedFont(PDFLib.StandardFonts.Helvetica);
+
+  const page = doc.addPage([A4Width, A4Height]);
+  const titleElem = document.getElementById("cover-title");
+  const title = titleElem.value;
+  page.drawText(title, {
+    x: 10,
+    y: 10,
+    font,
+    fontSize: 12,
+  });
+  await setPdfLink(doc, "cover-output", "Cover");
 }

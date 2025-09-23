@@ -45,10 +45,13 @@ async function createPdf() {
 
   // Default export is a4 paper, portrait, using millimeters for units
   const doc = await PDFLib.PDFDocument.load(pdf.data);
+  const out = await PDFLib.PDFDocument.create();
 
-  const pages = doc.getPages();
-  pages[0].drawText("Hello world!");
-  const pdfBytes = await doc.save();
+  const [page] = await out.copyPages(doc, [0]);
+  out.addPage(page);
+
+  // const pages = doc.getPages();
+  const pdfBytes = await out.save();
 
   // let name = pdf.name;
 

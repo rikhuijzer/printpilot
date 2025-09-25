@@ -177,6 +177,35 @@ function mmToPt(distance) {
   return distance * 72 / inchToMm;
 }
 
+function drawBackLine(page, font, loc, inner) {
+  const opacity = 0.5;
+  if (inner) {
+    page.drawLine({
+      start: { x: loc, y: 0 },
+      end: { x: loc, y: A4Width },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+  } else {
+    const length = 6;
+    page.drawLine({
+      start: { x: loc, y: 2 * length },
+      end: { x: loc, y: 3 * length },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+    page.drawLine({
+      start: { x: loc, y: A4Width - 2 * length },
+      end: { x: loc, y: A4Width - 3 * length },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+  }
+}
+
 async function createCover() {
   const doc = await PDFLib.PDFDocument.create();
   // doc.registerFontkit(fontkit);
@@ -187,7 +216,7 @@ async function createCover() {
   const front = doc.addPage([A4Height, A4Width]);
   const titleElem = document.getElementById('cover-title');
   let text = titleElem.value;
-  const fontSize = 24;
+  const fontSize = 20;
   const textWidth = font.widthOfTextAtSize(text, fontSize);
   const textHeight = font.heightAtSize(fontSize);
   front.drawText(text, {
@@ -199,29 +228,17 @@ async function createCover() {
   });
 
   const back = doc.addPage([A4Height, A4Width]);
-  let amountElem = document.getElementById('paper-amount');
-  let amount = amountElem.value;
-  let thicknessElem = document.getElementById('paper-thickness');
-  let thickness = thicknessElem.value;
-  back.drawLine({
-    start: { x: A4Height / 2, y: 0 },
-    end: { x: A4Height / 2, y: A4Width },
-    thickness: 1,
-    dashArray: [10, 5],
-  });
-  let annotationSize = 10;
-  console.log(`A4Height: ${A4Height}, A4Width: ${A4Width}`);
-  const test = mmToPt(297);
-  console.log(`test: ${test}`);
-  let middleTextWidth = font.widthOfTextAtSize('middle', annotationSize);
-  let middleTextHeight = font.heightAtSize(annotationSize);
-  back.drawText('middle', {
-    x: A4Height / 2 + 1.2 * middleTextHeight,
-    y: A4Width / 2 - middleTextWidth / 2,
-    font,
-    size: annotationSize,
-    rotate: PDFLib.degrees(90),
-  });
+  let spineWidthElem = document.getElementById('spine-width');
+  let spineWidth = spineWidthElem.value;
+  const middle = A4Height / 2;
+  console.log(`spineWidth: ${spineWidth} mm`);
+  spineWidth = mmToPt(spineWidth);
+  console.log(`spineWidth: ${spineWidth} pt`);
+  drawBackLine(back, font, middle + spineWidth / 2, true);
+  drawBackLine(back, font, middle - spineWidth / 2, true);
+  const foldDistance = mmToPt(6);
+  drawBackLine(back, font, middle + spineWidth / 2 + foldDistance, false);
+  drawBackLine(back, font, middle - spineWidth / 2 - foldDistance, false);
 
   await setPdfLink(doc, "cover-output", "Cover");
 }

@@ -88,13 +88,10 @@
                 <input type='text' id='cover-title'
                   value='Title - Author' placeholder='Title - Author'><br>
 
-                <label for='paper-amount'>Number of sheets</label><br>
-                <input type='text' id='paper-amount'
-                  value='100' placeholder='100'><br>
-
-                <label for='paper-thickness'>Paper thickness (g/m²)</label><br>
-                <input type='text' id='paper-thickness'
-                  value='80' placeholder='80'><br>
+                <label for='spine-width'>Spine width (mm)</label><br>
+                <input type='number'
+                  step='0.01' min='0.01' id='spine-width'
+                  value='10' placeholder='10'><br>
 
                 <button id='cover-submit' style='margin-bottom: 10px;'
                     onclick='createCover()'>

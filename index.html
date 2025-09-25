@@ -8,7 +8,8 @@
   <meta name='viewport' content='width=device-width'>
   <link rel='stylesheet' href='/static/style.css'>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src='/static/pdf.js' defer></script>
+  <script src="https://unpkg.com/@pdf-lib/fontkit@0.0.4/dist/fontkit.umd.min.js"></script>
+  <script src='/static/pdf.js'></script>
 </head>
 
 <body>
@@ -43,7 +44,7 @@
             </div><br>
             <p>
             This webpage provides a tool turns a PDF file containing the text of a book into a PDF file on A4 where the pages are printed in landscape side-by-side so that you can cut the pages and turn it into an A5 book.
-            See <a href="https://huijzer.xyz/posts/98/printing-a-book-at-home-with-minimal-equipment">Printing a Book at Home with Minimal Equipment</a> for more details.
+            See <a href="https://huijzer.xyz/posts/98/printing-a-book-at-home-with-minimal-equipment">Printing a Book at Home with Minimal Equipment</a> for a walkthrough.
             </p>
 
             <h2>Prepare the Book Body</h2>
@@ -53,16 +54,14 @@
             </p>
             <br>
             <br>
-            <form id='form'>
-                <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
-            </form>
+            <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
             <button id='body-reset' style='margin-bottom: 10px;'
                 onclick='wasmBindings.reset_body_upload()'>
                 Reset
             </button>
             <button id='body-submit' style='margin-bottom: 10px;'
                 onclick='createPdf()'>
-                Submit
+                Create Book Body
             </button>
             <div 
                 style='text-align: center; margin-top: 10px; margin-bottom: 4px;'
@@ -80,6 +79,25 @@
                 </fieldset>
             </div>
             <br>
+
+            <h2>Prepare the Book Cover</h2>
+            <div style='margin-bottom: 100px;'>
+                <label for='cover-title'>Spine text</label><br>
+                <input type='text' id='cover-title'
+                  value='Title - Author' placeholder='Title - Author'><br>
+
+                <label for='spine-width'>Spine width (mm)</label><br>
+                <input type='number'
+                  step='0.01' min='0.01' id='spine-width'
+                  value='10' placeholder='10'><br>
+
+                <button id='cover-submit' style='margin-bottom: 10px;'
+                    onclick='createCover()'>
+                    Create Book Cover
+                </button>
+                <div id='cover-output'></div>
+            </div>
+            <p>
         </div>
     </div>
 </body>

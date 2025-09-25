@@ -1,4 +1,5 @@
 // Using PDFLib since lopdf works, but is extremely low-level (unwieldy).
+// I also couldn't get Typst to compile.
 
 function loadPdf() {
   // Get the input element
@@ -39,24 +40,25 @@ function loadPdf() {
   });
 }
 
+const A4Width = PDFLib.PageSizes.A4[0];
+const A4Height = PDFLib.PageSizes.A4[1];
+
 async function addJoinedPage(src, dst, left_index, right_index) {
   const n = src.getPages().length;
   if (n <= left_index && n <= right_index) {
     return;
   }
-  const height = PDFLib.PageSizes.A4[0];
-  const width = PDFLib.PageSizes.A4[1];
-  const page = dst.addPage([width, height]);
+  const page = dst.addPage([A4Height, A4Width]);
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
-    page.drawPage(right, { x: width / 2, y: 0 });
+    page.drawPage(right, { x: A4Width / 2, y: 0 });
     page.drawPage(left, { x: 0, y: 0 });
   } else if (left_index < n) {
     const [left] = await dst.embedPdf(src, [left_index]);
     page.drawPage(left, { x: 0, y: 0 });
   } else if (right_index < n) {
     const [right] = await dst.embedPdf(src, [right_index]);
-    page.drawPage(right, { x: width / 2, y: 0 });
+    page.drawPage(right, { x: A4Width / 2, y: 0 });
   }
 }
 
@@ -166,5 +168,77 @@ async function createPdf() {
   }
 
   await setPdfLink(all, "body-output-all", "ALL pages");
+}
 
+function mmToPt(distance) {
+  // A4 height: 297 mm should be 842 pt.
+  // A4 width: 210 mm should be 595 pt.
+  const inchToMm = 25.4;
+  return distance * 72 / inchToMm;
+}
+
+function drawBackLine(page, font, loc, inner) {
+  const opacity = 0.5;
+  if (inner) {
+    page.drawLine({
+      start: { x: loc, y: 0 },
+      end: { x: loc, y: A4Width },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+  } else {
+    const length = 6;
+    page.drawLine({
+      start: { x: loc, y: 2 * length },
+      end: { x: loc, y: 3 * length },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+    page.drawLine({
+      start: { x: loc, y: A4Width - 2 * length },
+      end: { x: loc, y: A4Width - 3 * length },
+      thickness: 1,
+      dashArray: [],
+      opacity,
+    });
+  }
+}
+
+async function createCover() {
+  const doc = await PDFLib.PDFDocument.create();
+  // doc.registerFontkit(fontkit);
+
+  // const fontBytes = await fetch('/static/EBGaramond-Italic-VariableFont_wght.ttf').then(res => res.arrayBuffer());
+  const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
+
+  const front = doc.addPage([A4Height, A4Width]);
+  const titleElem = document.getElementById('cover-title');
+  let text = titleElem.value;
+  const fontSize = 20;
+  const textWidth = font.widthOfTextAtSize(text, fontSize);
+  const textHeight = font.heightAtSize(fontSize);
+  front.drawText(text, {
+    x: A4Height / 2 + textHeight / 2,
+    y: A4Width / 2 - textHeight / 2,
+    font,
+    size: fontSize,
+    rotate: PDFLib.degrees(90),
+  });
+
+  const back = doc.addPage([A4Height, A4Width]);
+  let spineWidthElem = document.getElementById('spine-width');
+  let spineWidth = spineWidthElem.value;
+  const middle = A4Height / 2;
+  console.log(`spineWidth: ${spineWidth} mm`);
+  spineWidth = mmToPt(spineWidth);
+  console.log(`spineWidth: ${spineWidth} pt`);
+  drawBackLine(back, font, middle + spineWidth / 2, true);
+  drawBackLine(back, font, middle - spineWidth / 2, true);
+  const foldDistance = mmToPt(6);
+  drawBackLine(back, font, middle + spineWidth / 2 + foldDistance, false);
+  drawBackLine(back, font, middle - spineWidth / 2 - foldDistance, false);
+
+  await setPdfLink(doc, "cover-output", "Cover");
 }

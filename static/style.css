@@ -86,7 +86,7 @@ input[type="submit"]:disabled {
     display: flex;
     flex-wrap: wrap;
     gap: 10px 10px;
-    margin-bottom: 150px;
+    margin-bottom: 30px;
     justify-content: center;
     align-items: center;
 }

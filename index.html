@@ -85,7 +85,17 @@
             <input type='file' id='back-upload' name='back-upload' accept='application/pdf'><br>
             <div style='margin-bottom: 100px;'>
                 <label for='cover-title'>Spine text</label><br>
-                <input type='text' id='cover-title' placeholder='Title - Author'><br>
+                <input type='text' id='cover-title'
+                  value='Title - Author' placeholder='Title - Author'><br>
+
+                <label for='paper-amount'>Number of sheets</label><br>
+                <input type='text' id='paper-amount'
+                  value='100' placeholder='100'><br>
+
+                <label for='paper-thickness'>Paper thickness (g/m²)</label><br>
+                <input type='text' id='paper-thickness'
+                  value='80' placeholder='80'><br>
+
                 <button id='cover-submit' style='margin-bottom: 10px;'
                     onclick='createCover()'>
                     Create Book Cover

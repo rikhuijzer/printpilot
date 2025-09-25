@@ -40,15 +40,15 @@ function loadPdf() {
   });
 }
 
-const A4Height = PDFLib.PageSizes.A4[0];
-const A4Width = PDFLib.PageSizes.A4[1];
+const A4Width = PDFLib.PageSizes.A4[0];
+const A4Height = PDFLib.PageSizes.A4[1];
 
 async function addJoinedPage(src, dst, left_index, right_index) {
   const n = src.getPages().length;
   if (n <= left_index && n <= right_index) {
     return;
   }
-  const page = dst.addPage([A4Width, A4Height]);
+  const page = dst.addPage([A4Height, A4Width]);
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
     page.drawPage(right, { x: A4Width / 2, y: 0 });
@@ -170,6 +170,13 @@ async function createPdf() {
   await setPdfLink(all, "body-output-all", "ALL pages");
 }
 
+function mmToPt(distance) {
+  // A4 height: 297 mm should be 842 pt.
+  // A4 width: 210 mm should be 595 pt.
+  const inchToMm = 25.4;
+  return distance * 72 / inchToMm;
+}
+
 async function createCover() {
   const doc = await PDFLib.PDFDocument.create();
   // doc.registerFontkit(fontkit);
@@ -177,21 +184,44 @@ async function createCover() {
   // const fontBytes = await fetch('/static/EBGaramond-Italic-VariableFont_wght.ttf').then(res => res.arrayBuffer());
   const font = await doc.embedFont(PDFLib.StandardFonts.TimesRoman);
 
-  const front = doc.addPage([A4Width, A4Height]);
+  const front = doc.addPage([A4Height, A4Width]);
   const titleElem = document.getElementById('cover-title');
   let text = titleElem.value;
   const fontSize = 24;
   const textWidth = font.widthOfTextAtSize(text, fontSize);
   const textHeight = font.heightAtSize(fontSize);
   front.drawText(text, {
-    x: A4Width / 2 + textHeight / 2,
-    y: A4Height / 2 - textHeight / 2,
+    x: A4Height / 2 + textHeight / 2,
+    y: A4Width / 2 - textHeight / 2,
     font,
-    fontSize,
+    size: fontSize,
     rotate: PDFLib.degrees(90),
   });
 
-  const back = doc.addPage([A4Width, A4Height]);
+  const back = doc.addPage([A4Height, A4Width]);
+  let amountElem = document.getElementById('paper-amount');
+  let amount = amountElem.value;
+  let thicknessElem = document.getElementById('paper-thickness');
+  let thickness = thicknessElem.value;
+  back.drawLine({
+    start: { x: A4Height / 2, y: 0 },
+    end: { x: A4Height / 2, y: A4Width },
+    thickness: 1,
+    dashArray: [10, 5],
+  });
+  let annotationSize = 10;
+  console.log(`A4Height: ${A4Height}, A4Width: ${A4Width}`);
+  const test = mmToPt(297);
+  console.log(`test: ${test}`);
+  let middleTextWidth = font.widthOfTextAtSize('middle', annotationSize);
+  let middleTextHeight = font.heightAtSize(annotationSize);
+  back.drawText('middle', {
+    x: A4Height / 2 + 1.2 * middleTextHeight,
+    y: A4Width / 2 - middleTextWidth / 2,
+    font,
+    size: annotationSize,
+    rotate: PDFLib.degrees(90),
+  });
 
   await setPdfLink(doc, "cover-output", "Cover");
 }

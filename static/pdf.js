@@ -51,14 +51,14 @@ async function addJoinedPage(src, dst, left_index, right_index) {
   const page = dst.addPage([A4Height, A4Width]);
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
-    page.drawPage(right, { x: A4Width / 2, y: 0 });
+    page.drawPage(right, { x: A4Height / 2, y: 0 });
     page.drawPage(left, { x: 0, y: 0 });
   } else if (left_index < n) {
     const [left] = await dst.embedPdf(src, [left_index]);
     page.drawPage(left, { x: 0, y: 0 });
   } else if (right_index < n) {
     const [right] = await dst.embedPdf(src, [right_index]);
-    page.drawPage(right, { x: A4Width / 2, y: 0 });
+    page.drawPage(right, { x: A4Height / 2, y: 0 });
   }
 }
 

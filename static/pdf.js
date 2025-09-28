@@ -236,9 +236,6 @@ async function createCover() {
   console.log(`spineWidth: ${spineWidth} pt`);
   drawBackLine(back, font, middle + spineWidth / 2, true);
   drawBackLine(back, font, middle - spineWidth / 2, true);
-  const foldDistance = mmToPt(6);
-  drawBackLine(back, font, middle + spineWidth / 2 + foldDistance, false);
-  drawBackLine(back, font, middle - spineWidth / 2 - foldDistance, false);
 
   await setPdfLink(doc, "cover-output", "Cover");
 }

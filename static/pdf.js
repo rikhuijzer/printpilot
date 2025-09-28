@@ -1,6 +1,13 @@
 // Using PDFLib since lopdf works, but is extremely low-level (unwieldy).
 // I also couldn't get Typst to compile.
 
+function setBodyOutput(html) {
+  const bodyOutput = document.getElementById("body-output");
+  if (bodyOutput) {
+    bodyOutput.innerHTML = html;
+  }
+}
+
 function loadPdf() {
   // Get the input element
   const input = document.getElementById("body-upload");
@@ -15,10 +22,7 @@ function loadPdf() {
     // No file selected, fetch default
     filePromise = fetch("/static/bushido.pdf")
       .then(async resp => {
-        const bodyOutput = document.getElementById("body-output");
-        if (bodyOutput) {
-          bodyOutput.innerHTML = `File selected: ${resp.status}`;
-        }
+        setBodyOutput(`File selected: ${resp.status}`);
         if (resp.status !== 200) {
           console.log("Failed to fetch bushido.pdf");
           throw new Error("Failed to fetch bushido.pdf");
@@ -73,7 +77,7 @@ function resetPdfLink(id) {
   }
 }
 
-async function setPdfLink(doc, id, name) {
+async function setPdfLink(doc, id) {
   let pdfBytes = await doc.save();
   const uint8Array = new Uint8Array(pdfBytes);
   const blob = new Blob([uint8Array], { type: "application/pdf" });
@@ -81,21 +85,24 @@ async function setPdfLink(doc, id, name) {
 
   const bodyOutput = document.getElementById(id);
   if (bodyOutput) {
-    bodyOutput.innerHTML = `<button class='body-output' onclick="window.open('${objectUrl}', '_blank')">Open ${name}</button>`;
+    bodyOutput.innerHTML = `<button class='body-output' onclick="window.open('${objectUrl}', '_blank')">Open PDF</button>`;
   }
+}
+
+async function setProgress(percentage) {
+  const html = `<div style="background:#eee;border-radius:4px;height:20px;width:300px;">
+    <div style="background:#4caf50;width:${percentage}%;height:100%;text-align:center;color:#fff;font:bold 12px/20px sans-serif">
+      ${percentage}%
+    </div>
+  </div>`;
+  setBodyOutput(html);
+  // Yield control to allow UI update
+  await new Promise(resolve => setTimeout(resolve, 0));
 }
 
 async function createPdf() {
   resetPdfLink("body-output-name");
-  resetPdfLink("body-output-even");
-  resetPdfLink("body-output-odd");
-  resetPdfLink("body-output-all");
-  const fieldsets = document.getElementsByClassName("body-output-fieldset");
-  for (const fieldset of fieldsets) {
-    if (fieldset) {
-      fieldset.style.display = "none";
-    }
-  }
+  resetPdfLink("body-output");
 
   let pdf = await loadPdf();
   console.log(pdf);
@@ -113,7 +120,11 @@ async function createPdf() {
   half = n % 2 == 0 ? half : half + 1;
   console.log(`half: ${half}`);
   for (let i = 0; i < ceildiv(half, 2); i++) {
-    console.log(`i: ${i}`);
+    if (i % 10 === 0) {
+      let percentage = (i / ceildiv(half, 2)) * 50;
+      percentage = Math.round(percentage);
+      await setProgress(percentage);
+    }
     // half + 2 : 2 : n
     const left_index = (half + 2) + (2 * i);
     console.log(`left_index: ${left_index}`);
@@ -123,20 +134,17 @@ async function createPdf() {
     // Flip since we're printing on the back of the odd pages.
     await addJoinedPage(doc, even, right_index, left_index);
   }
-  const evenBytes = await even.save();
   const outputName = document.getElementById("body-output-name");
   if (outputName) {
     outputName.innerHTML = `${pdf.name}:`;
   }
-  for (const fieldset of fieldsets) {
-      if (fieldset) {
-      fieldset.style.display = "flex";
-    }
-  }
-  await setPdfLink(even, "body-output-even", "EVEN pages");
 
   for (let i = 0; i < ceildiv(half, 2); i++) {
-    console.log(`i: ${i}`);
+    if (i % 10 === 0) {
+      let percentage = (i / ceildiv(half, 2)) * 50;
+      percentage = Math.round(percentage);
+      await setProgress(50 + percentage);
+    }
     // half + 1 : 2 : n
     const left_index = (half + 1) + (2 * i);
     console.log(`left_index: ${left_index}`);
@@ -144,8 +152,6 @@ async function createPdf() {
     console.log(`right_index: ${right_index}`);
     await addJoinedPage(doc, odd, left_index, right_index);
   }
-  const oddBytes = await odd.save();
-  await setPdfLink(odd, "body-output-odd", "ODD pages");
 
   const all = await PDFLib.PDFDocument.create();
   // Merge odd and even PDFs.
@@ -167,7 +173,7 @@ async function createPdf() {
     }
   }
 
-  await setPdfLink(all, "body-output-all", "ALL pages");
+  await setPdfLink(all, "body-output");
 }
 
 function mmToPt(distance) {

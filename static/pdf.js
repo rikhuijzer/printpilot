@@ -238,7 +238,7 @@ async function createCover() {
   // The lines themselves have a thickness plus some extra space to ensure that
   // the body sheets fit inside the cover after folding.
   let extra = 2.5;
-  let spineWidth = spineWidthElem.value + extra;
+  let spineWidth = parseFloat(spineWidthElem.value) + extra;
   const middle = A4Height / 2;
   console.log(`spineWidth: ${spineWidth} mm`);
   spineWidth = mmToPt(spineWidth);

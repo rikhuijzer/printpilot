@@ -227,10 +227,10 @@ async function createCover() {
   const textHeight = font.heightAtSize(fontSize);
   front.drawText(text, {
     x: A4Height / 2 + textHeight / 2,
-    y: A4Width / 2 - textHeight / 2,
+    y: A4Width / 2 + textWidth / 2,
     font,
     size: fontSize,
-    rotate: PDFLib.degrees(90),
+    rotate: PDFLib.degrees(270),
   });
 
   const back = doc.addPage([A4Height, A4Width]);

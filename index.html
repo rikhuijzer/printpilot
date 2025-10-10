@@ -55,6 +55,17 @@
             <br>
             <br>
             <input type='file' id='body-upload' name='body-upload' accept='application/pdf'><br>
+            <label for='move-to-middle'>Move to middle (mm)</label><br>
+            <i style="font-size: 0.8em;">This can be used to move the pages more towards the middle of the book.
+                Assuming a spine width of 10 mm, you probably want to set this to 10/4=2.5 mm.
+                The reason is that we assume the cover will be an A4 sheet, but the spine will cause the book body to extend beyond the cover. Moving the pages more towards the middle will allow you to keep the text aligned to the middle of the page when cutting the right edge of the body.
+            </i>
+            <br>
+            <input type='number'
+                step='0.01' min='0.01' id='move-to-middle'
+                value='0' placeholder='0'><br>
+            <br>
+            <br>
             <button id='body-reset' style='margin-bottom: 10px;'
                 onclick='wasmBindings.reset_body_upload()'>
                 Reset

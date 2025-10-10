@@ -47,22 +47,37 @@ function loadPdf() {
 const A4Width = PDFLib.PageSizes.A4[0];
 const A4Height = PDFLib.PageSizes.A4[1];
 
+function isEven(n) {
+  return n % 2 == 0;
+}
+
+function isRightPage(n) {
+  // Javascript is zero-indexed, so the first/right page is zero (even).
+  return isEven(n);
+}
+
 async function addJoinedPage(src, dst, left_index, right_index) {
+  const moveToMiddleElem = document.getElementById('move-to-middle');
+  const moveToMiddleMm = parseFloat(moveToMiddleElem.value);
+  const moveToMiddle = mmToPt(moveToMiddleMm);
   const n = src.getPages().length;
   if (n <= left_index && n <= right_index) {
     return;
   }
   const page = dst.addPage([A4Height, A4Width]);
+  const half = A4Height / 2;
+  const leftX = isRightPage(left_index) ? -moveToMiddle : moveToMiddle;
+  const rightX = isRightPage(right_index) ? half - moveToMiddle : half + moveToMiddle;
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
-    page.drawPage(right, { x: A4Height / 2, y: 0 });
-    page.drawPage(left, { x: 0, y: 0 });
+    page.drawPage(left, { x: leftX, y: 0 });
+    page.drawPage(right, { x: rightX, y: 0 });
   } else if (left_index < n) {
     const [left] = await dst.embedPdf(src, [left_index]);
-    page.drawPage(left, { x: 0, y: 0 });
+    page.drawPage(left, { x: leftX, y: 0 });
   } else if (right_index < n) {
     const [right] = await dst.embedPdf(src, [right_index]);
-    page.drawPage(right, { x: A4Height / 2, y: 0 });
+    page.drawPage(right, { x: rightX, y: 0 });
   }
 }
 

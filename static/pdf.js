@@ -67,9 +67,10 @@ function isRightPage(src, i) {
     // Javascript is zero-indexed, so the first/right page is zero (even).
     return isEven(i);
   } else {
-    // Depending on whether n is even or odd, the right page for the second half
-    // might be even or odd.
-    return isEven(n) ? isEven(i) : !isEven(i);
+    // To determine whether the page is on the right, we need to start counting
+    // from the second half since the odd index might be the first in the second
+    // half and then would be on the right.
+    return isEven(i - half);
   }
 }
 
@@ -147,18 +148,19 @@ async function createPdf() {
   const { n, half } = n_half(doc);
   console.log(`n: ${n}`);
   console.log(`half: ${half}`);
+  // Even pages in output document.
   for (let i = 0; i < ceildiv(half, 2); i++) {
     if (i % 10 === 0) {
       let percentage = (i / ceildiv(half, 2)) * 50;
       percentage = Math.round(percentage);
       await setProgress(percentage);
     }
-    // half + 2 : 2 : n
-    const left_index = (half + 2) + (2 * i);
-    console.log(`left_index: ${left_index}`);
-    // 2 : 2 : half
+    // (half + 2) : 2 : n
+    const left_index = (half + 1) + (2 * i);
+    console.log(`even left_index: ${left_index}`);
+    // 1 : 2 : half
     const right_index = (1 + (2 * i));
-    console.log(`right_index: ${right_index}`);
+    console.log(`even right_index: ${right_index}`);
     // Flip since we're printing on the back of the odd pages.
     await addJoinedPage(doc, even, right_index, left_index);
   }
@@ -167,17 +169,19 @@ async function createPdf() {
     outputName.innerHTML = `${pdf.name}:`;
   }
 
+  // Odd pages in output document.
   for (let i = 0; i < ceildiv(half, 2); i++) {
     if (i % 10 === 0) {
       let percentage = (i / ceildiv(half, 2)) * 50;
       percentage = Math.round(percentage);
       await setProgress(50 + percentage);
     }
-    // half + 1 : 2 : n
-    const left_index = (half + 1) + (2 * i);
-    console.log(`left_index: ${left_index}`);
+    // (half + 1) : 2 : n
+    const left_index = half + (2 * i);
+    console.log(`odd left_index: ${left_index}`);
+    // 0 : 2 : half
     const right_index = 2 * i;
-    console.log(`right_index: ${right_index}`);
+    console.log(`odd right_index: ${right_index}`);
     await addJoinedPage(doc, odd, left_index, right_index);
   }
 

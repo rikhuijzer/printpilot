@@ -51,9 +51,26 @@ function isEven(n) {
   return n % 2 == 0;
 }
 
-function isRightPage(n) {
-  // Javascript is zero-indexed, so the first/right page is zero (even).
-  return isEven(n);
+function n_half(doc) {
+  const n = doc.getPages().length;
+  let half = ceildiv(n, 2);
+  let n_even = isEven(n);
+  // If n is odd, we need to add one since we are printing duplex.
+  // Can lead to 3 empty pages in the worst case.
+  half = n_even ? half : half + 1;
+  return { n, half };
+}
+
+function isRightPage(src, i) {
+  const { n, half } = n_half(src);
+  if (i < half) {
+    // Javascript is zero-indexed, so the first/right page is zero (even).
+    return isEven(i);
+  } else {
+    // Depending on whether n is even or odd, the right page for the second half
+    // might be even or odd.
+    return isEven(n) ? isEven(i) : !isEven(i);
+  }
 }
 
 async function addJoinedPage(src, dst, left_index, right_index) {
@@ -66,8 +83,8 @@ async function addJoinedPage(src, dst, left_index, right_index) {
   }
   const page = dst.addPage([A4Height, A4Width]);
   const half = A4Height / 2;
-  const leftX = isRightPage(left_index) ? -moveToMiddle : moveToMiddle;
-  const rightX = isRightPage(right_index) ? half - moveToMiddle : half + moveToMiddle;
+  const leftX = isRightPage(src, left_index) ? -moveToMiddle : moveToMiddle;
+  const rightX = isRightPage(src, right_index) ? half - moveToMiddle : half + moveToMiddle;
   if (left_index < n && right_index < n) {
     const [left, right] = await dst.embedPdf(src, [left_index, right_index]);
     page.drawPage(left, { x: leftX, y: 0 });
@@ -119,7 +136,7 @@ async function createPdf() {
   resetPdfLink("body-output-name");
   resetPdfLink("body-output");
 
-  let pdf = await loadPdf();
+  const pdf = await loadPdf();
   console.log(pdf);
 
   // Default export is a4 paper, portrait, using millimeters for units
@@ -127,12 +144,8 @@ async function createPdf() {
   const even = await PDFLib.PDFDocument.create();
   const odd = await PDFLib.PDFDocument.create();
 
-  const n = doc.getPages().length;
+  const { n, half } = n_half(doc);
   console.log(`n: ${n}`);
-  let half = ceildiv(n, 2);
-  // If n is odd, we need to add one since we are printing duplex.
-  // Can lead to 3 empty pages in the worst case.
-  half = n % 2 == 0 ? half : half + 1;
   console.log(`half: ${half}`);
   for (let i = 0; i < ceildiv(half, 2); i++) {
     if (i % 10 === 0) {
